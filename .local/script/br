@@ -1,0 +1,15 @@
+#!/bin/bash
+#
+# Break: Prints a horizontal red ruler fitted to the terminal
+#
+# Copyright (C) 2013 Chris Hiszpanski
+
+width=$(tput cols)
+
+echo -n $'\e[0;31m'
+for (( i=1; i<=$width; i++ ))
+do
+	echo -n '='
+done
+echo $'\e[m'
+
