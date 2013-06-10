@@ -1,0 +1,42 @@
+#!/usr/bin/env python
+
+"""
+mkshm: make shared memory disk (i.e. ram disk)
+
+Copyright (C) 2013 Chris Hiszpanski <chiszp@gmail.com>
+"""
+
+def main(name, size):
+    from subprocess import CalledProcessError, check_call, check_output
+    block_size = 512
+    kib = 1024
+    mib = kib * kib
+
+    try:
+        # create and attach a disk image
+        dev = check_output([ \
+            'hdiutil', 'attach', '-nomount', \
+            'ram://{blocks}'.format(blocks=size * mib / block_size)])
+
+        # erase disk and map it to /dev/shm
+        check_call(['diskutil', 'erasevolume', 'HFS+', name, dev.strip()])
+
+    except CalledProcessError:
+        print 'Failed to make disk'
+
+
+if __name__ == '__main__':
+    from optparse import OptionParser
+
+    # parse command line arguments
+    parser = OptionParser()
+    parser.usage = "usage: %prog [options] [name]"
+    parser.add_option("-n", "--size", dest="size", metavar="NUM", default=256,
+                      help="disk size in MiB (default is 256)")
+    (options, args) = parser.parse_args()
+
+    # name of volume (default is shm)
+    name = args[0] if len(args) > 0 else "shm"
+
+    # call main with parsed arguments
+    main(name, size=int(options.size))
