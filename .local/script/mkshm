@@ -19,7 +19,11 @@ def main(name, size):
             'ram://{blocks}'.format(blocks=size * mib / block_size)])
 
         # erase disk and map it to /dev/shm
-        check_call(['diskutil', 'erasevolume', 'HFS+', name, dev.strip()])
+        check_call(['diskutil',
+                    'erasevolume',
+                    'Case-sensitive HFS+',
+                     name,
+                     dev.strip()])
 
     except CalledProcessError:
         print 'Failed to make disk'
